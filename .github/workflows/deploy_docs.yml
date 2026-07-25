@@ -32,6 +32,16 @@ jobs:
         working-directory: quartz
         run: npm ci
 
+      - name: Cache Quartz plugins
+        uses: actions/cache@v4
+        with:
+          path: quartz/.quartz
+          key: quartz-plugins-${{ hashFiles('quartz/quartz.config.ts', 'quartz/package-lock.json') }}
+
+      - name: Install Quartz plugins
+        working-directory: quartz
+        run: npx quartz plugin install --from-config
+
       - name: Build documentation
         working-directory: quartz
         run: npx quartz build --directory ../docs
