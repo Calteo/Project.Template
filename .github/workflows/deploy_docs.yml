@@ -39,6 +39,7 @@ jobs:
           key: quartz-plugins-${{ hashFiles('quartz/quartz.config.ts', 'quartz/package-lock.json') }}
 
       - name: Install Quartz plugins
+        if: steps.quartz-cache.outputs.cache-hit != 'true'
         working-directory: quartz
         run: npx quartz plugin install --from-config
 
