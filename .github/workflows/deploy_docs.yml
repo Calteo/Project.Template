@@ -44,6 +44,15 @@ jobs:
         working-directory: quartz
         run: chmod +x node_modules/.bin/*
 
+      - name: Debug Quartz binary
+        working-directory: quartz
+        run: |
+          which quartz || true
+          ls -la node_modules/.bin/quartz || true
+          readlink -f node_modules/.bin/quartz || true
+          file node_modules/.bin/quartz || true
+          head -5 node_modules/.bin/quartz || true
+
       - name: Install Quartz plugins
         if: steps.node-modules.outputs.cache-hit != 'true'
         working-directory: quartz
