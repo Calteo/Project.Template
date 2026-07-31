@@ -33,7 +33,7 @@ jobs:
         run: npm ci
 
       - name: Cache Quartz plugins
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: quartz/.quartz
           key: quartz-plugins-${{ hashFiles('quartz/quartz.config.ts', 'quartz/package-lock.json') }}
