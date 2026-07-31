@@ -35,8 +35,7 @@ jobs:
             path: quartz/node_modules
             key: quartz-node-modules-${{ runner.os }}-${{ hashFiles('quartz/package-lock.json') }}
 
-      - name: Install Quartz dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
+      - name: Install Quartz dependencies        
         working-directory: quartz
         run: npm ci
 
