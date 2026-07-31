@@ -40,6 +40,10 @@ jobs:
         working-directory: quartz
         run: npm ci
 
+      - name: Fix npm executable permissions
+        working-directory: quartz
+        run: chmod +x node_modules/.bin/*
+
       - name: Install Quartz plugins
         if: steps.node-modules.outputs.cache-hit != 'true'
         working-directory: quartz
