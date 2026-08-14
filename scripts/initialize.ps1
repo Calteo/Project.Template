@@ -19,7 +19,7 @@ function Replace()
             $value
         })     
      Set-Content $filename $content
-     Write-Host "Replaced placehoders in $filename"
+     Write-Host "`e[34mReplaced placehoders in $filename`e[0m"
      return $null
 }
 
@@ -35,7 +35,7 @@ Replace README.md
 
 Write-Host "`e[34mPatch documentation`e[0m"
 Replace docfx_project\index.md
-Replace docfx_project\docfx.json |
+Replace docfx_project\docfx.json
 
 Write-Host "`e[34mRemove initialization`e[0m"
 Remove-Item .github\workflows\initialization.yml -Force
