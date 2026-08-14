@@ -6,7 +6,7 @@ function Replace()
 {
      param(
         [Parameter(Mandatory)]
-        [string]$filename,
+        [string]$filename
     )
     $content = Get-Content $filename -Raw
 
