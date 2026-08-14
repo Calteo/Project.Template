@@ -18,27 +18,27 @@ function Replace()
             }
             $value
         })     
-     $_ = Set-Content $filename $content
+     Set-Content $filename $content
      Write-Host "Replaced placehoders in $filename"
+     return $null
 }
 
-Write-Host "Script called with environment"
+Write-Host "`e[33mScript called with environment`e[0m"
 ls env:
 
-Write-Host "Create solution ${env:PROJECT_NAME}.slnx"
+Write-Host "`e[34mCreate solution ${env:PROJECT_NAME}.slnx`e[0m"
 Rename-Item src\Solution.slnx "${env:PROJECT_NAME}.slnx"
 
-Write-Host "Patch README.md"
+Write-Host "`e[34mPatch README.md`e[0m"
 Move-Item README-Project.md README.md -Force
 Replace README.md
 
-Write-Host "Patch documentation"
+Write-Host "`e[34mPatch documentation`e[0m"
 Replace docfx_project\index.md
-Replace docfx_project\docfx.json
+Replace docfx_project\docfx.json |
 
-Write-Host "Remove initialization"
+Write-Host "`e[34mRemove initialization`e[0m"
 Remove-Item .github\workflows\initialization.yml -Force
+Remove-Item $PSCommandPath -Force
 
-Write-Host "`e[31mERROR: Something went wrong`e[0m"
-Write-Host "`e[33mWARNING: Check this`e[0m"
-Write-Host "`e[32mSUCCESS: Initialization complete`e[0m"
+Write-Host "`e[32mInitialization complete`e[0m"
