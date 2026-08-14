@@ -6,14 +6,18 @@ function Replace()
     )
     $content = Get-Content $filename -Raw
 
-    $content = [regex]::Replace($content, '\{\{<([^>]+)>\}\}',
+    [regex]::Replace($content, '\{\{(?<name>[^}]+)\}\}',
         {
             param($match)
 
-            $envName = $match.Groups[1].Value
-            [Environment]::GetEnvironmentVariable($envName)
-        })
-     
+            $envName = $match.Groups['name'].Value
+            $value = [Environment]::GetEnvironmentVariable($envName)
+            if ($value -eq $null)
+            { 
+                $value = "{{$envName}}"
+            }
+            $value
+        })     
      Set-Content $filename $content
      Write-Host "Replaced placehoders in $filename"
 }
