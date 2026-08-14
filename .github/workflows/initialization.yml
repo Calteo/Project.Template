@@ -1,0 +1,26 @@
+name: Initialize repository
+
+on:
+  push:
+    branches:
+      - main
+ 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PROJECT_NAME: ${{ github.event.repository.name }}
+
+jobs:
+  initialize:
+    name: Initialize repository
+    runs-on: windows-latest  
+    steps:
+      - uses: actions/checkout@v6
+        
+      - name: Run initialization
+        shell: pwsh
+        run: ./scripts/initialize.ps1
