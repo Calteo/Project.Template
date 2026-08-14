@@ -1,9 +1,9 @@
-# Project
-Component to create interprocess communication
+# {{PROJECT_NAME}}
+Project description
 
 ## Code
 
-You can find the code project at [GitHub](https://github.com/<gituser>/<repositoryname>).
+You can find the code project at [GitHub](https://github.com/<gituser>/{{PROJECT_NAME}}).
 
 ## Licences 
 
