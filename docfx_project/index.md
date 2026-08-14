@@ -3,7 +3,7 @@ Project description
 
 ## Code
 
-You can find the code project at [GitHub](https://github.com/<gituser>/{{PROJECT_NAME}}).
+You can find the code project at [GitHub](https://{{GITHUB_REPOSITORY_OWNER}}.github.com/{{PROJECT_NAME}}).
 
 ## Licences 
 
