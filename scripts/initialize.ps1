@@ -15,10 +15,10 @@ function Replace()
         })
      
      Set-Content $filename $content
-     Write-Host "Replaced placehoders in $filename" -ForegroundColor DarkGray
+     Write-Host "Replaced placehoders in $filename"
 }
 
-Write-Host "Script called with environment" -ForegroundColor Yellow
+Write-Host "Script called with environment"
 ls env:
 
 Write-Host "Create solution ${env:PROJECT_NAME}.slnx"
@@ -30,4 +30,4 @@ Replace README.md
 
 Write-Host "Patch documentation"
 Replace docfx_project\index.md
-Replace docfx_project\docfc.json
+Replace docfx_project\docfx.json
