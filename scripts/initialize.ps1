@@ -1,7 +1,3 @@
-$replacements = @{
-    "{{PROJECT_NAME}}" = $env:PROJECT_NAME
-}
-
 function Replace()
 {
      param(
@@ -10,22 +6,28 @@ function Replace()
     )
     $content = Get-Content $filename -Raw
 
-        foreach ($replacement in $replacements.GetEnumerator()) {
-            $content = $content.Replace(
-                $replacement.Key,
-                $replacement.Value
-            )
-        }
+    $content = [regex]::Replace($content, '\{\{<([^>]+)>\}\}',
+        {
+            param($match)
 
-        Set-Content $filename $content
-        echo "Replaced placehoders in $filename"
+            $envName = $match.Groups[1].Value
+            [Environment]::GetEnvironmentVariable($envName)
+        })
+     
+     Set-Content $filename $content
+     Write-Host "Replaced placehoders in $filename" -ForegroundColor DarkGray
 }
 
-echo "Script called"
+Write-Host "Script called with environment" -ForegroundColor Yellow
 ls env:
 
-echo "Create solution ${env:PROJECT_NAME}.slnx"
+Write-Host "Create solution ${env:PROJECT_NAME}.slnx"
 Rename-Item .\src\Solution.slnx "${env:PROJECT_NAME}.slnx"
 
-echo "Patch documentation"
+Write-Host "Patch README.md"
+Move-Item README-Project.md README.md -Force
+Replace README.md
+
+Write-Host "Patch documentation"
 Replace docfx_project\index.md
+Replace docfx_project\docfc.json

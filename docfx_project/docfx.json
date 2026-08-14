@@ -8,7 +8,7 @@
         {
           "src": "../",
           "files": [
-            "src/Porject/*.csproj"
+            "src/{{PROJECT_NAME}}/*.csproj"
           ]
         }
       ]
