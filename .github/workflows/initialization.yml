@@ -16,6 +16,7 @@ env:
 
 jobs:
   initialize:
+    if: github.repository != 'Calteo/Project.Temaplate'
     name: Initialize repository
     runs-on: windows-latest  
     steps:
