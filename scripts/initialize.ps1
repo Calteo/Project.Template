@@ -6,7 +6,7 @@ function Replace()
     )
     $content = Get-Content $filename -Raw
 
-    [regex]::Replace($content, '\{\{(?<name>[^}]+)\}\}',
+    $content = [regex]::Replace($content, '\{\{(?<name>[^}]+)\}\}',
         {
             param($match)
 
@@ -16,11 +16,11 @@ function Replace()
             { 
                 $value = "{{$envName}}"
             }
-            $value
-        })     
+            return $value
+        })
+
      Set-Content $filename $content
      Write-Host "`e[34mReplaced placehoders in $filename`e[0m"
-     return $null
 }
 
 Write-Host "`e[33mScript called with environment`e[0m"
@@ -31,7 +31,8 @@ Rename-Item src\Solution.slnx "${env:PROJECT_NAME}.slnx"
 
 Write-Host "`e[34mPatch README.md`e[0m"
 Move-Item README-Project.md README.md -Force
-Replace README.md
+$replaced = Replace README.md
+Write-Host "REPLACED: $replaced"
 
 Write-Host "`e[34mPatch documentation`e[0m"
 Replace docfx_project\index.md
