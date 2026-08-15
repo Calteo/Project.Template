@@ -6,7 +6,7 @@ function Replace()
     )
     $content = Get-Content $filename -Raw
 
-    $content = [regex]::Replace($content, '\{\{(?<name>[^}]+)\}\}',
+    $content = [regex]::Replace($content, '\{\{(?<name>[A-Z0-9_]+)\}\}',
         {
             param($match)
 
