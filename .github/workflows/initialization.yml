@@ -20,7 +20,7 @@ jobs:
         
       - name: Run initialization
         shell: pwsh
-        run: ./scripts/initialize.ps1
+        run: init\initialize.ps1
 
       - name: Commit changes
         shell: pwsh
