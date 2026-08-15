@@ -40,11 +40,6 @@ Replace docfx_project\index.md
 Replace docfx_project\docfx.json
 Write-Output "::endgroup::"
 
-Write-Output "::group::`e[34mPatch actions`e[0m"
-Move-Item init\main.yml .github\workflows\main.yml
-Replace .github\workflows\main.yml
-Write-Output "::endgroup::"
-
 Write-Output "`e[34mRemove initialization`e[0m"
 Remove-Item .github\workflows\initialization.yml -Force
 Remove-Item init -Recurse -Force
