@@ -47,34 +47,26 @@ jobs:
 
     # - name: Echo Version 
     #  run: echo "Version = ${{ env.BUILD_VERSION }}"
-    
-    - name: Version Visual Studio SDK projects
-      uses: roryprimrose/set-vs-sdk-project-version@v1.0.6
-      with:
-        version: "${{ env.BUILD_VERSION }}.0"
-        assemblyVersion: "${{ env.BUILD_VERSION }}.0"
-        fileVersion: "${{ env.BUILD_VERSION }}.0"
-        informationalVersion: "${{ env.BUILD_VERSION }}.0"
-    
+        
     # Compile the solution
     - name: Compile solution
       working-directory: src
-      run: dotnet build -c Release
+      run: dotnet build -c Release -p:BuildVersion=${{ env.BUILD_VERSION }}.0
 
     # Test
     - name: Run tests
       working-directory: src\${{ env.PROJECT_NAME }}.Test
-      run: dotnet test -c Release --no-build
+      run: dotnet test -c Release --no-build -p:BuildVersion=${{ env.BUILD_VERSION }}.0
 
     # Pack
     - name: Package
       working-directory: src\${{ env.PROJECT_NAME }}
-      run: dotnet pack -c Release --no-build -o ..\..\package
+      run: dotnet pack -c Release --no-build -o ..\..\package -p:BuildVersion=${{ env.BUILD_VERSION }}.0
 
     # Publish
     - name: Publish
       working-directory: src\${{ env.PROJECT_NAME }}
-      run: dotnet publish -c Release --no-build -o ..\..\publish
+      run: dotnet publish -c Release --no-build -o ..\..\publish -p:BuildVersion=${{ env.BUILD_VERSION }}.0
     
     # Documentation
 
@@ -82,9 +74,6 @@ jobs:
       working-directory: docfx_project
       run: docfx docfx.json
       continue-on-error: false
-
-    - name: Remove unnecessary files
-      run: del output\*.pdb,output\*.dev.json,output\*.deps.json 
 
     - name: Zip binaries
       uses: TheDoctor0/zip-release@0.6.2
@@ -115,11 +104,15 @@ jobs:
     - name: NuGet push
       run: dotnet nuget push **\*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
 
-    # publish documentation
-    - name: Publish documentation
+    # Upload the generated documentation as a GitHub Pages artifact
+    - name: Create documentation artifact
       if: github.event_name == 'push'
-      uses: peaceiris/actions-gh-pages@v4
+      uses: actions/upload-pages-artifact@v4
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docfx_project/docs
-        force_orphan: true
+        path: docfx_project/docs
+
+    # Deploy the artifact to GitHub Pages
+    - name: Deploy documentation artifact to GitHub Pages
+      if: github.event_name == 'push'
+      id: deployment
+      uses: actions/deploy-pages@v4
