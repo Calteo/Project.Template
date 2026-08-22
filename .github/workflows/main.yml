@@ -9,6 +9,12 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pages: write
+  packages: write  
+  id-token: write
+
 env:
   BUILD_VERSION: "0.1.${{ github.run_number }}"  
   PROJECT_NAME: ${{ github.event.repository.name }}
@@ -28,12 +34,12 @@ jobs:
         fetch-depth: 0
 
     - name: Install .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 10.0.x
 
     - name: Install NuGet
-      uses: NuGet/setup-nuget@v1.0.5
+      uses: NuGet/setup-nuget@v4
 
     # Install docFX
     - name: Install DocFX
@@ -43,7 +49,7 @@ jobs:
     #  run: echo "Version = ${{ env.BUILD_VERSION }}"
     
     - name: Version Visual Studio SDK projects
-      uses: roryprimrose/set-vs-sdk-project-version@v1.0.3
+      uses: roryprimrose/set-vs-sdk-project-version@v1.0.6
       with:
         version: "${{ env.BUILD_VERSION }}.0"
         assemblyVersion: "${{ env.BUILD_VERSION }}.0"
@@ -52,9 +58,23 @@ jobs:
     
     # Compile the solution
     - name: Compile solution
-      run: dotnet build src\${{ env.PROJECT_NAME }}.slnx -c Release -output
+      working-directory: src
+      run: dotnet build -c Release
 
-    # Test?
+    # Test
+    - name: Run tests
+      working-directory: src\${{ env.PROJECT_NAME }}.Test
+      run: dotnet test -c Release --no-build
+
+    # Pack
+    - name: Package
+      working-directory: src\${{ env.PROJECT_NAME }}
+      run: dotnet pack -c Release --no-build -o ..\..\package
+
+    # Publish
+    - name: Publish
+      working-directory: src\${{ env.PROJECT_NAME }}
+      run: dotnet publish -c Release --no-build -o ..\..\publish
     
     # Documentation
 
@@ -70,19 +90,19 @@ jobs:
       uses: TheDoctor0/zip-release@0.6.2
       with:
         filename: '${{ env.PROJECT_NAME }}.${{ env.BUILD_VERSION }}-binary.zip'
-        directory: output
-        path: '*.dll *.exe'
+        directory: publish
+        path: '*'
         type: 'zip'
 
     # create github release
     - name: Create Release
-      uses: softprops/action-gh-release@v1        
+      uses: softprops/action-gh-release@v2        
       with:
         name: Release ${{ env.BUILD_VERSION }}
         tag_name: ${{ env.BUILD_VERSION }}
         files: |
-          ./output/${{ env.PROJECT_NAME }}.${{ env.BUILD_VERSION }}-binary.zip
-          ./output/${{ env.PROJECT_NAME }}.${{ env.BUILD_VERSION }}.nupkg      
+          ./publish/${{ env.PROJECT_NAME }}.${{ env.BUILD_VERSION }}-binary.zip
+          ./package/${{ env.PROJECT_NAME }}.${{ env.BUILD_VERSION }}.nupkg      
 
     # Get a short-lived NuGet API key
     - name: NuGet login (OIDC → temp API key)
@@ -98,7 +118,7 @@ jobs:
     # publish documentation
     - name: Publish documentation
       if: github.event_name == 'push'
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: docfx_project/docs
